@@ -39,7 +39,7 @@ app.post("/analyze-food", async (req, res) => {
         const jsonResponse = await openai.chat.completions.create({
             model: "gpt-4",
             messages: [
-                { role: "system", content: "You are a nutrition expert. Given a food and weight, return ONLY a JSON object with the potassium and sodium content in mg. No extra text, no explanation. Example format: {\"potassium\": 422, \"sodium\": 1}" },
+                { role: "system", content: "You are a nutrition expert. Given a food and weight, return ONLY a JSON object with the potassium and sodium content in mg. No extra text, no explanation. Example format: {\"potassium\": 422, \"sodium\": 1}. Always ensure the JSON values are correct and match the food weight provided." },
                 { role: "user", content: `How much potassium and sodium is in ${userInput}?` }
             ]
         });
@@ -64,7 +64,7 @@ app.post("/analyze-food", async (req, res) => {
         const explanationResponse = await openai.chat.completions.create({
             model: "gpt-4",
             messages: [
-                { role: "system", content: "You are a nutrition expert. Given a food and weight, provide a clear explanation of its potassium and sodium content. Provide the aproximate weight of the object if its not provided by the user. Do NOT return a JSON object in this response. Do NOT give an explanation of what potassium and sodium is ONLY how much the provided food contains." },
+                { role: "system", content: "You are a nutrition expert. Given a food and weight, provide a clear explanation of its potassium and sodium content. Ensure that the values in your explanation match exactly with the JSON values. Do NOT return a JSON object in this response." },
                 { role: "user", content: `How much potassium and sodium is in ${userInput}? Explain it clearly.` }
             ]
         });
@@ -83,4 +83,3 @@ app.post("/analyze-food", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch nutrition data." });
     }
 });
-
