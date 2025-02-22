@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potassium & Sodium Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Potassium & Sodium Tracker</h1>
+        <input type="text" id="foodInput" placeholder="Enter food (e.g., '130g apple')">
+        <button onclick="submitFood()">Add</button>
+        <button onclick="undoLastEntry()">Undo</button>
+        <button onclick="clearAll()">Clear</button>
+        
+        <h2>Today's Intake</h2>
+        <p>Potassium: <span id="potassiumCount">0</span> </p>
+        <p>Sodium: <span id="sodiumCount">0</span> </p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
