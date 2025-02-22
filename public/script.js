@@ -1,4 +1,4 @@
-const backendURL = "http://localhost:3000"; // Update if hosted elsewhere
+const backendURL = "https://potassium-tracker.onrender.com"; // Update if hosted elsewhere
 
 let totalPotassium = 0;
 let totalSodium = 0;
