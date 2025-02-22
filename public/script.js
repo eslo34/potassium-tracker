@@ -1,4 +1,4 @@
-const backendURL = "https://potassium-tracker.onrender.com"; // Update if hosted elsewhere
+const backendURL = "https://potassium-tracker.onrender.com"; // Use your actual Render URL
 
 let totalPotassium = 0;
 let totalSodium = 0;
@@ -50,7 +50,7 @@ function updateUI() {
     document.getElementById("sodiumCount").innerText = `${totalSodium} mg`;
 }
 
-// Function to undo the last addition
+// Function to undo the last entry
 function undoLastEntry() {
     if (history.length > 0) {
         const lastEntry = history.pop(); // Remove last entry from history

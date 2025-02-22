@@ -35,47 +35,39 @@ app.post("/analyze-food", async (req, res) => {
     const userInput = req.body.food;
 
     try {
-        // First request: Get JSON data
-        const jsonResponse = await openai.chat.completions.create({
+        // Ask ChatGPT for a natural language response that includes JSON at the end
+        const response = await openai.chat.completions.create({
             model: "gpt-4",
             messages: [
-                { role: "system", content: "You are a nutrition expert. Given a food and weight, return ONLY a JSON object with the potassium and sodium content of the food provided in mg. No extra text, no explanation. Example format: {\"potassium\": 422, \"sodium\": 1}. Always ensure the JSON values are correct and match the food weight provided." },
+                { role: "system", content: "You are a nutrition expert. Given a food and weight, provide a clear explanation of its potassium and sodium content. At the end of your explanation, include a JSON object with the same values in this format: {\"potassium\": 422, \"sodium\": 1}. Ensure the JSON values match your explanation exactly." },
                 { role: "user", content: `How much potassium and sodium is in ${userInput}?` }
             ]
         });
 
-        const jsonText = jsonResponse.choices[0].message.content.trim();
+        const aiResponse = response.choices[0].message.content.trim();
         let potassium = 0;
         let sodium = 0;
         let jsonData = "{}";
 
-        // Extract and parse JSON
+        // Extract JSON from the response
         try {
-            jsonData = jsonText.match(/\{.*?\}/s)[0]; // Extract only the JSON block
-            const parsedResponse = JSON.parse(jsonData);
-            potassium = parsedResponse.potassium || 0;
-            sodium = parsedResponse.sodium || 0;
+            const jsonMatch = aiResponse.match(/\{.*?\}/s);
+            if (jsonMatch) {
+                jsonData = jsonMatch[0]; // Extract only the JSON block
+                const parsedResponse = JSON.parse(jsonData);
+                potassium = parsedResponse.potassium || 0;
+                sodium = parsedResponse.sodium || 0;
+            }
         } catch (error) {
             console.error("Error parsing JSON from ChatGPT:", error);
-            jsonData = "{}";
         }
 
-        // Second request: Get natural language explanation
-        const explanationResponse = await openai.chat.completions.create({
-            model: "gpt-4",
-            messages: [
-                { role: "system", content: "You are a nutrition expert. Given a food and weight, provide a clear explanation of its potassium and sodium content. Do NOT return a JSON object in this response." },
-                { role: "user", content: `How much potassium and sodium is in ${userInput}? Explain it clearly.` }
-            ]
-        });
-
-        const fullResponse = explanationResponse.choices[0].message.content.trim();
-
+        // Send both the natural language explanation and the extracted JSON data
         res.json({
             potassium,
             sodium,
-            fullResponse, // Send full ChatGPT explanation
-            jsonData // Send structured JSON data
+            fullResponse: aiResponse, // Full text response from ChatGPT
+            jsonData // Extracted JSON
         });
 
     } catch (error) {
