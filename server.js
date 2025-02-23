@@ -25,23 +25,29 @@ async function scrapeGoogleNutrition(foodQuery) {
     try {
         const targetURL = `https://www.google.com/search?q=${encodeURIComponent(foodQuery + " potassium sodium nutrition")}`;
 
+        console.log(`Scraping Google: ${targetURL}`); // ✅ Debugging
+
         const response = await axios.get("http://api.scraperapi.com", {
             params: {
-                api_key: SCRAPER_API_KEY,
-                url: targetURL
+                api_key: SCRAPER_API_KEY, // ✅ Make sure this is set in Render
+                url: targetURL,
+                render: "true" // ✅ Ensures JavaScript-rendered pages are loaded
             }
         });
 
-        if (!response.data) {
-            return "No search results found.";
+        console.log("ScraperAPI Response:", response.data.substring(0, 500)); // ✅ Debugging
+
+        if (!response.data || response.data.includes("CAPTCHA")) {
+            return "Google blocked the request. Try another API like SerpAPI.";
         }
 
-        return response.data; // Return raw scraped HTML/text
+        return response.data; // ✅ Return raw HTML
     } catch (error) {
-        console.error("Web scraping failed:", error);
+        console.error("Web scraping failed:", error.message);
         return "Error fetching nutrition data.";
     }
 }
+
 
 // 🔹 Function to process scraped data with ChatGPT
 async function analyzeWithChatGPT(scrapedText, foodQuery) {
