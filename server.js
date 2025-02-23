@@ -3,22 +3,27 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios");
+const path = require("path"); // ✅ Add this to fix the error
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(bodyParser.json());
 
-// Serve static frontend files from 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
+// ✅ Serve static frontend files
+app.use(express.static(path.join(__dirname, "public")));
 
-// Serve index.html for any unknown route
+// ✅ Serve `index.html` for any unknown route
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
 
-app.use(bodyParser.json());
 
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
