@@ -3,32 +3,24 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios");
-const path = require("path"); // ✅ Add this to fix the error
+const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // ✅ Use dynamic port for Render
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ Serve `index.html` for any unknown route
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
-
-
+// 🔹 API Keys (Stored in Render environment variables)
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// Function to scrape Google search results for nutrition data
+// 🔹 Function to scrape Google search results for food nutrition
 async function scrapeGoogleNutrition(foodQuery) {
     try {
         const targetURL = `https://www.google.com/search?q=${encodeURIComponent(foodQuery + " potassium sodium nutrition")}`;
@@ -51,15 +43,15 @@ async function scrapeGoogleNutrition(foodQuery) {
     }
 }
 
-// Function to process scraped data with ChatGPT
+// 🔹 Function to process scraped data with ChatGPT
 async function analyzeWithChatGPT(scrapedText, foodQuery) {
     try {
         const openai = require("openai");
         const client = new openai.OpenAI({ apiKey: OPENAI_API_KEY });
 
         const prompt = `
-            You are a nutrition expert. Given the following Google search results, summarize how much potassium and sodium the food '${foodQuery}' contains.
-            Then, return a JSON object at the end in this format:
+            You are a nutrition expert. Based on the following Google search results, summarize the potassium and sodium content of '${foodQuery}'.
+            Then, at the end, return a JSON object in this format:
             {"potassium": 422, "sodium": 1}
 
             Search Results:
@@ -73,7 +65,7 @@ async function analyzeWithChatGPT(scrapedText, foodQuery) {
 
         const aiResponse = response.choices[0].message.content.trim();
 
-        // Extract JSON from the response
+        // Extract JSON from ChatGPT's response
         let jsonData = "{}";
         let potassium = 0;
         let sodium = 0;
@@ -103,7 +95,7 @@ async function analyzeWithChatGPT(scrapedText, foodQuery) {
     }
 }
 
-// API Route to Analyze Food
+// 🔹 API Route to Analyze Food
 app.post("/analyze-food", async (req, res) => {
     const foodQuery = req.body.food;
 
@@ -116,6 +108,12 @@ app.post("/analyze-food", async (req, res) => {
     res.json(result);
 });
 
+// 🔹 Serve `index.html` for any unknown route
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ✅ Start Server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
