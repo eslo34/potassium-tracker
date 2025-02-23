@@ -3,18 +3,17 @@ const backendURL = "https://potassium-tracker.onrender.com"; // Use your actual 
 let totalPotassium = 0;
 let totalSodium = 0;
 let history = []; // Store history of added values for undo
+let trackedFoods = []; // Store tracked food items
 
 // Function to load stored values from local storage
 function loadFromLocalStorage() {
     const savedPotassium = localStorage.getItem("totalPotassium");
     const savedSodium = localStorage.getItem("totalSodium");
+    const savedFoods = localStorage.getItem("trackedFoods");
 
-    if (savedPotassium !== null) {
-        totalPotassium = parseInt(savedPotassium);
-    }
-    if (savedSodium !== null) {
-        totalSodium = parseInt(savedSodium);
-    }
+    if (savedPotassium !== null) totalPotassium = parseInt(savedPotassium);
+    if (savedSodium !== null) totalSodium = parseInt(savedSodium);
+    if (savedFoods !== null) trackedFoods = JSON.parse(savedFoods);
 
     updateUI();
 }
@@ -23,6 +22,7 @@ function loadFromLocalStorage() {
 function saveToLocalStorage() {
     localStorage.setItem("totalPotassium", totalPotassium);
     localStorage.setItem("totalSodium", totalSodium);
+    localStorage.setItem("trackedFoods", JSON.stringify(trackedFoods));
 }
 
 // Load saved values on page load
@@ -58,6 +58,9 @@ async function submitFood() {
     totalPotassium += potassium;
     totalSodium += sodium;
 
+    // Add to tracked foods list
+    trackedFoods.push({ food: foodInput, potassium, sodium });
+
     // Save the new values to local storage
     saveToLocalStorage();
 
@@ -75,6 +78,39 @@ async function submitFood() {
 function updateUI() {
     document.getElementById("potassiumCount").innerText = `${totalPotassium} mg`;
     document.getElementById("sodiumCount").innerText = `${totalSodium} mg`;
+
+    // Update tracked food list
+    const foodList = document.getElementById("foodList");
+    foodList.innerHTML = "";
+
+    trackedFoods.forEach((item, index) => {
+        const foodEntry = document.createElement("div");
+        foodEntry.classList.add("food-entry");
+
+        foodEntry.innerHTML = `
+            <span>${item.food}: P-${item.potassium}, S-${item.sodium}</span>
+            <button class="delete-btn" onclick="deleteFood(${index})">Delete</button>
+        `;
+
+        foodList.appendChild(foodEntry);
+    });
+}
+
+// Function to delete a food entry
+function deleteFood(index) {
+    const item = trackedFoods[index];
+
+    // Subtract values from the total
+    totalPotassium -= item.potassium;
+    totalSodium -= item.sodium;
+
+    // Remove from tracked foods
+    trackedFoods.splice(index, 1);
+
+    // Save the updated values to local storage
+    saveToLocalStorage();
+
+    updateUI();
 }
 
 // Function to undo the last entry
@@ -88,7 +124,10 @@ function undoLastEntry() {
         totalPotassium = Math.max(0, totalPotassium);
         totalSodium = Math.max(0, totalSodium);
 
-        // Save the updated values to local storage
+        // Remove last added food
+        trackedFoods.pop();
+
+        // Save updated values
         saveToLocalStorage();
 
         updateUI();
@@ -102,6 +141,7 @@ function clearAll() {
     totalPotassium = 0;
     totalSodium = 0;
     history = []; // Clear history
+    trackedFoods = []; // Clear food list
 
     // Save reset values to local storage
     saveToLocalStorage();
