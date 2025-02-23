@@ -4,6 +4,30 @@ let totalPotassium = 0;
 let totalSodium = 0;
 let history = []; // Store history of added values for undo
 
+// Function to load stored values from local storage
+function loadFromLocalStorage() {
+    const savedPotassium = localStorage.getItem("totalPotassium");
+    const savedSodium = localStorage.getItem("totalSodium");
+
+    if (savedPotassium !== null) {
+        totalPotassium = parseInt(savedPotassium);
+    }
+    if (savedSodium !== null) {
+        totalSodium = parseInt(savedSodium);
+    }
+
+    updateUI();
+}
+
+// Function to save values to local storage
+function saveToLocalStorage() {
+    localStorage.setItem("totalPotassium", totalPotassium);
+    localStorage.setItem("totalSodium", totalSodium);
+}
+
+// Load saved values on page load
+document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
+
 async function submitFood() {
     const foodInput = document.getElementById("foodInput").value;
 
@@ -34,6 +58,9 @@ async function submitFood() {
     totalPotassium += potassium;
     totalSodium += sodium;
 
+    // Save the new values to local storage
+    saveToLocalStorage();
+
     // Update UI with accumulated values
     updateUI();
 
@@ -61,6 +88,9 @@ function undoLastEntry() {
         totalPotassium = Math.max(0, totalPotassium);
         totalSodium = Math.max(0, totalSodium);
 
+        // Save the updated values to local storage
+        saveToLocalStorage();
+
         updateUI();
     } else {
         alert("No history to undo!");
@@ -72,6 +102,10 @@ function clearAll() {
     totalPotassium = 0;
     totalSodium = 0;
     history = []; // Clear history
+
+    // Save reset values to local storage
+    saveToLocalStorage();
+
     updateUI();
 }
 
