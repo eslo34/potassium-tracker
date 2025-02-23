@@ -8,6 +8,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+
+// Serve static frontend files from 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve index.html for any unknown route
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+
 app.use(bodyParser.json());
 
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
