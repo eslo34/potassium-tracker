@@ -23,11 +23,13 @@ async function searchPerplexity(foodQuery) {
         console.log(`🔍 Searching Perplexity AI for: ${foodQuery}`);
 
         const response = await axios.post(
-            "https://api.perplexity.ai/sonar/search",
+            "https://api.perplexity.ai/chat/completions",
             {
-                query: `How much potassium and sodium does ${foodQuery} contain?`,
-                num_results: 3, // Get top 3 results
-                search_type: "precision"
+                model: "sonar-small-online", // ✅ Use the correct Perplexity model
+                messages: [
+                    { role: "system", content: "You are a nutrition assistant. Provide potassium and sodium content for food items." },
+                    { role: "user", content: `How much potassium and sodium does ${foodQuery} contain? Give exact values in milligrams.` }
+                ]
             },
             {
                 headers: {
@@ -39,29 +41,30 @@ async function searchPerplexity(foodQuery) {
 
         console.log("🟢 Perplexity Response:", JSON.stringify(response.data, null, 2));
 
-        if (!response.data || !response.data.results || response.data.results.length === 0) {
+        if (!response.data || !response.data.choices || response.data.choices.length === 0) {
             return { food: foodQuery, potassium: "Not found", sodium: "Not found" };
         }
 
-        // Extract relevant text from the top Perplexity result
-        const firstResult = response.data.results[0].text;
+        // Extract Perplexity response
+        const resultText = response.data.choices[0].message.content;
 
-        // Try to extract numeric potassium and sodium values using regex
-        const potassiumMatch = firstResult.match(/(\d+)\s?mg potassium/i);
-        const sodiumMatch = firstResult.match(/(\d+)\s?mg sodium/i);
+        // Try to extract potassium and sodium values using regex
+        const potassiumMatch = resultText.match(/(\d+)\s?mg potassium/i);
+        const sodiumMatch = resultText.match(/(\d+)\s?mg sodium/i);
 
         return {
             food: foodQuery,
             potassium: potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found",
             sodium: sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found",
-            fullResponse: firstResult // Full response from Perplexity
+            fullResponse: resultText // Full response from Perplexity
         };
 
     } catch (error) {
-        console.error("❌ Perplexity API error:", error.message);
+        console.error("❌ Perplexity API error:", error.response?.data || error.message);
         return { food: foodQuery, potassium: "Error", sodium: "Error" };
     }
 }
+
 
 // 🔹 API Route to Analyze Food
 app.post("/analyze-food", async (req, res) => {
