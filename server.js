@@ -21,7 +21,7 @@ async function fetchNutritionData(foodQuery) {
         const response = await axios.post(
             "https://api.perplexity.ai/chat/completions",
             {
-                model: "sonar-pro", // ✅ Uses Perplexity's model
+                model: "sonar-pro",
                 messages: [
                     {
                         role: "system",
@@ -46,20 +46,21 @@ async function fetchNutritionData(foodQuery) {
 
         const resultText = response.data.choices[0].message.content;
 
-        console.log("Extracted Text from Perplexity:", resultText);
+        console.log("📝 Extracted Text from Perplexity:", resultText);
 
-        // ✅ Extract the first potassium and sodium values
-        const potassiumMatch = resultText.match(/Potassium\s(\d+)\s?mg/i);
-        const sodiumMatch = resultText.match(/Sodium\s(\d+)\s?mg/i);
+        // ✅ Updated Regex to extract potassium and sodium correctly
+        const match = resultText.match(/Potassium\s(\d+).*?Sodium\s(\d+)/i);
 
-        const potassium = potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found";
-        const sodium = sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found";
+        const potassium = match ? `${match[1]} mg` : "Not found";
+        const sodium = match ? `${match[2]} mg` : "Not found";
+
+        console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}`);
 
         return {
             food: foodQuery,
             potassium,
             sodium,
-            fullResponse: resultText // ✅ Keeps full response for debugging
+            fullResponse: resultText
         };
 
     } catch (error) {
@@ -67,6 +68,7 @@ async function fetchNutritionData(foodQuery) {
         return { food: foodQuery, potassium: "Error", sodium: "Error" };
     }
 }
+
 
 
 
