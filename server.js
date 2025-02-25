@@ -16,7 +16,7 @@ const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 
 async function fetchNutritionData(foodQuery) {
     try {
-        console.log(`Fetching data for: ${foodQuery}`);
+        console.log(`🔍 Fetching data for: ${foodQuery}`);
 
         const response = await axios.post(
             "https://api.perplexity.ai/chat/completions",
@@ -35,7 +35,7 @@ async function fetchNutritionData(foodQuery) {
             }
         );
 
-        console.log("Perplexity Response:", JSON.stringify(response.data, null, 2));
+        console.log("🟢 Perplexity Response:", JSON.stringify(response.data, null, 2));
 
         if (!response.data || !response.data.choices || response.data.choices.length === 0) {
             return { food: foodQuery, potassium: "Not found", sodium: "Not found" };
@@ -43,26 +43,33 @@ async function fetchNutritionData(foodQuery) {
 
         const resultText = response.data.choices[0].message.content;
 
-        const potassiumMatch = resultText.match(/(\d+)\s?mg potassium/i);
-        const sodiumMatch = resultText.match(/(\d+)\s?mg sodium/i);
+        console.log("Extracted Text from Perplexity:", resultText);
+
+        // ✅ Improved Regex Extraction
+        const potassiumMatch = resultText.match(/(?:potassium:|contains)\s?(\d+)\s?mg/i);
+        const sodiumMatch = resultText.match(/(?:sodium:|contains)\s?(\d+)\s?mg/i);
+
+        const potassium = potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found";
+        const sodium = sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found";
 
         return {
             food: foodQuery,
-            potassium: potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found",
-            sodium: sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found",
-            fullResponse: resultText
+            potassium,
+            sodium,
+            fullResponse: resultText // ✅ Includes the full response for debugging
         };
 
     } catch (error) {
-        console.error("Perplexity API error:", error.response?.data || error.message);
+        console.error("❌ Perplexity API error:", error.response?.data || error.message);
         return { food: foodQuery, potassium: "Error", sodium: "Error" };
     }
 }
 
+
 app.post("/analyze-food", async (req, res) => {
     const foodQuery = req.body.food;
     const nutritionData = await fetchNutritionData(foodQuery);
-    res.json(nnutritionData);
+    res.json(nutritionData);
 });
 
 app.get("*", (req, res) => {
