@@ -23,7 +23,7 @@ async function fetchNutritionData(foodQuery) {
             {
                 model: "sonar-pro", // Ensure this model is accessible with your API key
                 messages: [
-                    { role: "system", content: "You are a nutrition assistant. Provide potassium and sodium content for food items in milligrams." },
+                    { role: "system", content: "You are a nutrition assistant. Provide potassium and sodium content for food items in milligrams. Make sure to list all the sources which you went through. For each source list the potassium and sodium levels you found on that perticular source. Your answer should look like: 'The official potassium and sodium levels for _ grams of _ is Potassium _ and Sodium _. Source 1 is _(example USDA) that said _ mg of potassium and _ mg of sodium per 100g of _.' Then continue on with listing your sources in that order. After all sources are listed end with 'therefore my conclision is that the official potassium and sodium levels are Potassium _ and Sodium _'." },
                     { role: "user", content: `How much potassium and sodium does ${foodQuery} contain? Provide exact values in milligrams.` }
                 ]
             },
