@@ -21,11 +21,11 @@ async function fetchNutritionData(foodQuery) {
         const response = await axios.post(
             "https://api.perplexity.ai/chat/completions",
             {
-                model: "sonar-pro", // ✅ Ensure this model is accessible with your API key
+                model: "sonar-pro", // ✅ Uses Perplexity's model
                 messages: [
                     {
                         role: "system",
-                        content: "You are a nutrition assistant. Provide potassium and sodium content for food items in milligrams. Make sure to list all the sources which you went through. For each source list the potassium and sodium levels you found on that particular source. Your answer should look like: 'The official potassium and sodium levels for _ grams of _ is Potassium _ and Sodium _. (new paragraph) Source 1 is _(example USDA) that said _ mg of potassium and _ mg of sodium per 100g of _.' Then continue on with listing your sources in that order. After all sources are listed end with 'Therefore, my conclusion is that the official potassium and sodium levels are Potassium _ and Sodium _'."
+                        content: "You are a nutrition assistant. Provide potassium and sodium content for food items in milligrams. Make sure to list all the sources which you went through. For each source list the potassium and sodium levels you found on that particular source. Your answer should look like this: 'The potassium and sodium levels for _ grams of _ is Potassium _ and Sodium _. (new paragraph. Like when you press enter in word) Source 1 is _(example USDA).' Then continue on with listing your sources in that order. ONLY use the source USDA. NO OTHER SOURCES ARE ALLOWED besides USDA. The web URL of the source you're taking information from should look something like this 'https://fdc.nal.usda.gov/food-details/170026/nutrients'"
                     },
                     { role: "user", content: `How much potassium and sodium does ${foodQuery} contain? Provide exact values in milligrams.` }
                 ]
@@ -48,17 +48,18 @@ async function fetchNutritionData(foodQuery) {
 
         console.log("Extracted Text from Perplexity:", resultText);
 
-        // ✅ Extracting only the "official" values from the first sentence
-        const officialMatch = resultText.match(/The official potassium and sodium levels for .*? is Potassium (\d+) mg and Sodium (\d+) mg/i);
+        // ✅ Extract the first potassium and sodium values
+        const potassiumMatch = resultText.match(/Potassium\s(\d+)\s?mg/i);
+        const sodiumMatch = resultText.match(/Sodium\s(\d+)\s?mg/i);
 
-        const potassium = officialMatch ? `${officialMatch[1]} mg` : "Not found";
-        const sodium = officialMatch ? `${officialMatch[2]} mg` : "Not found";
+        const potassium = potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found";
+        const sodium = sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found";
 
         return {
             food: foodQuery,
             potassium,
             sodium,
-            fullResponse: resultText // ✅ Full response for debugging
+            fullResponse: resultText // ✅ Keeps full response for debugging
         };
 
     } catch (error) {
@@ -66,6 +67,7 @@ async function fetchNutritionData(foodQuery) {
         return { food: foodQuery, potassium: "Error", sodium: "Error" };
     }
 }
+
 
 
 app.post("/analyze-food", async (req, res) => {
