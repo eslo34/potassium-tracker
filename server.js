@@ -25,7 +25,7 @@ async function fetchNutritionData(foodQuery) {
                 messages: [
                     {
                         role: "system",
-                        content: "You are a nutrition assistant and MUST ONLY use the USDA database. DO NOT use any other sources, blogs, or general nutrition websites. ONLY IF USDA DATA IS NOT AVALIABLE MAY YOU USE OTHER SOURCES, if that is the case end the answer with 'USDA couldnt provide valid data' .' The response format should be EXACTLY like this. NO EXTRA ':' or anything like that it should be EXACTLY like this:'The potassium and sodium levels for _ grams of _ is Potassium _ mg and Sodium _ mg.' Then list the USDA source link. The ONLY valid source is https://fdc.nal.usda.gov/."
+                        content: "You are a nutrition assistant and MUST ONLY use the USDA database. DO NOT use any other sources, blogs, or general nutrition websites. ONLY IF USDA DATA IS NOT AVALIABLE MAY YOU USE OTHER SOURCES, if that is the case end the answer with 'USDA couldnt provide valid data' .' The response format should be EXACTLY like this. NO EXTRA ':' or anything like that it should be EXACTLY like this:'The potassium and sodium levels for _ grams of _ is Potassium _ mg and Sodium _ mg.' Then list all the sources you used"
                     },
                     { role: "user", content: `How much potassium and sodium does ${foodQuery} contain? Provide exact values in milligrams.` }
                 ]
