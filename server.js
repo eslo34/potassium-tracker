@@ -25,7 +25,7 @@ async function fetchNutritionData(foodQuery) {
                 messages: [
                     {
                         role: "system",
-                        content: "You are a nutrition assistant. Provide potassium and sodium content for food items in milligrams. Make sure to list all the sources which you went through. For each source list the potassium and sodium levels you found on that particular source. Your answer should look EXACTLY like this. Under NO CURCOMSTANCES should there be en extra ':' or anything like that. YOU HAVE TO FOLLOW THIS EXACT STRUCTURE. Here is the structure you have to follow: 'The potassium and sodium levels for _ grams of _ is Potassium _ and Sodium _. (new paragraph. Like when you press enter in word) Source 1 is _(example USDA).' Then continue on with listing your sources in that order. ONLY use the source USDA. NO OTHER SOURCES ARE ALLOWED besides USDA. The web URL of the source you're taking information from should look something like this 'https://fdc.nal.usda.gov/food-details/170026/nutrients'"
+                        content: "You are a nutrition assistant and MUST ONLY use the USDA database. DO NOT use any other sources, blogs, or general nutrition websites. ONLY IF USDA DATA IS NOT AVALIABLE MAY YOU USE OTHER SOURCES, if that is the case end the answer with 'USDA couldnt provide valid data' .' The response format should be EXACTLY like this. NO EXTRA ':' or anything like that it should be EXACTLY like this:'The potassium and sodium levels for _ grams of _ is Potassium _ mg and Sodium _ mg.' Then list the USDA source link. The ONLY valid source is https://fdc.nal.usda.gov/."
                     },
                     { role: "user", content: `How much potassium and sodium does ${foodQuery} contain? Provide exact values in milligrams.` }
                 ]
@@ -41,35 +41,38 @@ async function fetchNutritionData(foodQuery) {
         console.log("🟢 Perplexity Response:", JSON.stringify(response.data, null, 2));
 
         if (!response.data || !response.data.choices || response.data.choices.length === 0) {
-            return { food: foodQuery, potassium: "Not found", sodium: "Not found" };
+            return { food: foodQuery, potassium: "Not found", sodium: "Not found", source: "None" };
         }
 
         const resultText = response.data.choices[0].message.content;
 
         console.log("📝 Extracted Text from Perplexity:", resultText);
 
-        // ✅ Updated Regex to extract potassium and sodium correctly
+        // ✅ Extract values only from the official statement
         const match = resultText.match(/Potassium\s(\d+).*?Sodium\s(\d+)/i);
 
         const potassium = match ? `${match[1]} mg` : "Not found";
         const sodium = match ? `${match[2]} mg` : "Not found";
 
-        console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}`);
+        // ✅ Extract the USDA URL if available
+        const usdaLinkMatch = resultText.match(/(https:\/\/fdc\.nal\.usda\.gov\/food-details\/\d+\/nutrients)/i);
+        const usdaLink = usdaLinkMatch ? usdaLinkMatch[1] : "USDA data not found";
+
+        console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}, Source: ${usdaLink}`);
 
         return {
             food: foodQuery,
             potassium,
             sodium,
+            source: usdaLink, // ✅ Adds the USDA source link
             fullResponse: resultText
         };
 
     } catch (error) {
         console.error("❌ Perplexity API error:", error.response?.data || error.message);
-        return { food: foodQuery, potassium: "Error", sodium: "Error" };
+        return { food: foodQuery, potassium: "Error", sodium: "Error", source: "Error" };
     }
 }
-
-
 
 
 app.post("/analyze-food", async (req, res) => {
