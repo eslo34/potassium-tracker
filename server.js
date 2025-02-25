@@ -6,112 +6,68 @@ const axios = require("axios");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000; // ✅ Use dynamic port for Render
+const PORT = process.env.PORT || 3000; // ✅ Use dynamic port
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, "public")));
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-// 🔹 API Keys (Stored in Render environment variables)
-const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// 🔹 Function to scrape Google search results for food nutrition
-async function scrapeGoogleNutrition(foodQuery) {
+// 🔹 API Key (Stored in Render environment variables)
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+
+// 🔹 Function to search Perplexity AI for nutrition data
+async function searchPerplexity(foodQuery) {
     try {
-        const targetURL = `https://www.google.com/search?q=${encodeURIComponent(foodQuery + " potassium sodium nutrition")}`;
+        console.log(`🔍 Searching Perplexity AI for: ${foodQuery}`);
 
-        console.log(`Scraping Google: ${targetURL}`); // ✅ Debugging
-
-        const response = await axios.get("http://api.scraperapi.com", {
-            params: {
-                api_key: SCRAPER_API_KEY, // ✅ Make sure this is set in Render
-                url: targetURL,
-                render: "true" // ✅ Ensures JavaScript-rendered pages are loaded
+        const response = await axios.post(
+            "https://api.perplexity.ai/sonar/search",
+            {
+                query: `How much potassium and sodium does ${foodQuery} contain?`,
+                num_results: 3, // Get top 3 results
+                search_type: "precision"
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${PERPLEXITY_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
             }
-        });
+        );
 
-        console.log("ScraperAPI Response:", response.data.substring(0, 500)); // ✅ Debugging
+        console.log("🟢 Perplexity Response:", JSON.stringify(response.data, null, 2));
 
-        if (!response.data || response.data.includes("CAPTCHA")) {
-            return "Google blocked the request. Try another API like SerpAPI.";
+        if (!response.data || !response.data.results || response.data.results.length === 0) {
+            return { food: foodQuery, potassium: "Not found", sodium: "Not found" };
         }
 
-        return response.data; // ✅ Return raw HTML
-    } catch (error) {
-        console.error("Web scraping failed:", error.message);
-        return "Error fetching nutrition data.";
-    }
-}
+        // Extract relevant text from the top Perplexity result
+        const firstResult = response.data.results[0].text;
 
-
-// 🔹 Function to process scraped data with ChatGPT
-async function analyzeWithChatGPT(scrapedText, foodQuery) {
-    try {
-        const openai = require("openai");
-        const client = new openai.OpenAI({ apiKey: OPENAI_API_KEY });
-
-        const prompt = `
-            You are a nutrition expert. Based on the following Google search results, summarize the potassium and sodium content of '${foodQuery}'.
-            Then, at the end, return a JSON object in this format:
-            {"potassium": 422, "sodium": 1}
-
-            Search Results:
-            ${scrapedText}
-        `;
-
-        const response = await client.chat.completions.create({
-            model: "gpt-4",
-            messages: [{ role: "user", content: prompt }]
-        });
-
-        const aiResponse = response.choices[0].message.content.trim();
-
-        // Extract JSON from ChatGPT's response
-        let jsonData = "{}";
-        let potassium = 0;
-        let sodium = 0;
-
-        try {
-            const jsonMatch = aiResponse.match(/\{.*?\}/s);
-            if (jsonMatch) {
-                jsonData = jsonMatch[0]; // Extract JSON block
-                const parsedResponse = JSON.parse(jsonData);
-                potassium = parsedResponse.potassium || 0;
-                sodium = parsedResponse.sodium || 0;
-            }
-        } catch (error) {
-            console.error("Error parsing JSON from ChatGPT:", error);
-        }
+        // Try to extract numeric potassium and sodium values using regex
+        const potassiumMatch = firstResult.match(/(\d+)\s?mg potassium/i);
+        const sodiumMatch = firstResult.match(/(\d+)\s?mg sodium/i);
 
         return {
-            potassium,
-            sodium,
-            fullResponse: aiResponse, // Full natural language response
-            jsonData // Extracted JSON
+            food: foodQuery,
+            potassium: potassiumMatch ? `${potassiumMatch[1]} mg` : "Not found",
+            sodium: sodiumMatch ? `${sodiumMatch[1]} mg` : "Not found",
+            fullResponse: firstResult // Full response from Perplexity
         };
 
     } catch (error) {
-        console.error("Error processing with ChatGPT:", error);
-        return { error: "Failed to process data with AI." };
+        console.error("❌ Perplexity API error:", error.message);
+        return { food: foodQuery, potassium: "Error", sodium: "Error" };
     }
 }
 
 // 🔹 API Route to Analyze Food
 app.post("/analyze-food", async (req, res) => {
     const foodQuery = req.body.food;
-
-    // Step 1: Scrape Google for potassium & sodium info
-    const scrapedText = await scrapeGoogleNutrition(foodQuery);
-
-    // Step 2: Process the scraped data with ChatGPT
-    const result = await analyzeWithChatGPT(scrapedText, foodQuery);
-
-    res.json(result);
+    const nutritionData = await searchPerplexity(foodQuery);
+    res.json(nutritionData);
 });
 
 // 🔹 Serve `index.html` for any unknown route
