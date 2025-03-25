@@ -1,99 +1,111 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-}
-
-.container {
-    background: white;
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    font-family: 'Segoe UI', sans-serif;
+    color: #ffffff;
+  }
+  
+  .container {
+    max-width: 500px;
+    margin: 40px auto;
     padding: 20px;
-    width: 300px;
-    margin: auto;
-    margin-top: 50px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    width: 350px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
+    background-color: #161b22;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.2);
+  }
+  
+  h1, h2 {
+    color: #00aaff;
     text-align: center;
-    border-radius: 8px;
-}
-
-.popup-content {
-    font-size: 16px;
-    text-align: left;
-}
-
-.popup pre {
-    background: #f4f4f4;
+  }
+  
+  .input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"] {
+    flex: 1;
     padding: 10px;
-    overflow-x: auto;
-    border-radius: 5px;
-}
-
-.popup button {
-    margin-top: 10px;
-    padding: 8px 15px;
-    background: red;
-    color: white;
     border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.popup button:hover {
-    background: darkred;
-}
-
-button {
-    background: #007bff;
-    color: white;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  button {
+    background-color: #00aaff;
+    color: #fff;
     border: none;
-    padding: 10px;
-    margin: 5px;
+    border-radius: 6px;
+    padding: 10px 16px;
     cursor: pointer;
-    border-radius: 5px;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-button:nth-child(2) { /* Undo button */
-    background: orange;
-}
-
-button:nth-child(3) { /* Clear button */
-    background: red;
-}
-
-button:nth-child(2):hover {
-    background: darkorange;
-}
-
-button:nth-child(3):hover {
-    background: darkred;
-}
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #008fcc;
+  }
+  
+  button.secondary {
+    background-color: #444c56;
+  }
+  
+  button.secondary:hover {
+    background-color: #5a6570;
+  }
+  
+  .tracker-box, .intake-list, .response {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #21262d;
+    border-radius: 10px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .intake-item {
+    margin: 10px 0;
+    padding: 8px 12px;
+    background-color: #2a3038;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #eee;
+  }
+  
+  .delete-btn {
+    background-color: #ffa726;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .delete-btn:hover {
+    background-color: #ff9100;
+  }
+  
+  #responseBox.hidden {
+    display: none;
+  }
+  
+  .close-btn {
+    margin-top: 15px;
+    background-color: #ff3b3b;
+  }
+  
+  .button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  

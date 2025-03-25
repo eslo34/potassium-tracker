@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Potassium & Sodium Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Potassium & Sodium Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>Potassium & Sodium Tracker</h1>
-        <input type="text" id="foodInput" placeholder="Enter food (e.g., '130g apple')">
-        <button onclick="submitFood()">Add</button>
-        <button onclick="undoLastEntry()">Undo</button>
-        <button onclick="clearAll()">Clear</button>
-        
-        <h2>Today's Intake</h2>
-        <p>Potassium: <span id="potassiumCount">0</span> </p>
-        <p>Sodium: <span id="sodiumCount">0</span> </p>
+  <div class="container">
+    <h1>🥑 Potassium & Sodium Tracker</h1>
 
-        <h2>Tracked Food Intake</h2>
-        <div id="foodList"></div>
-
+    <div class="input-group">
+      <input type="text" id="foodInput" placeholder="Enter food (e.g., '130g apple')" />
+      <button id="addBtn">Add</button>
     </div>
 
-    <script src="script.js"></script>
+    <div class="button-row">
+      <button id="undoBtn" class="secondary">Undo</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+    </div>
+
+    <div class="tracker-box">
+      <h2>Today's Intake</h2>
+      <p id="potassiumDisplay">Potassium: 0 mg</p>
+      <p id="sodiumDisplay">Sodium: 0 mg</p>
+    </div>
+
+    <div class="intake-list">
+      <h2>Tracked Food Intake</h2>
+      <ul id="intakeList"></ul>
+    </div>
+
+    <div id="responseBox" class="response hidden">
+      <h2>Nutrition Breakdown</h2>
+      <p id="responseText"></p>
+      <button id="closeResponse" class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
