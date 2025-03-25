@@ -28,6 +28,8 @@ function saveToLocalStorage() {
 // Load saved values on page load
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("addBtn").addEventListener("click", submitFood);
+    document.getElementById("undoBtn").addEventListener("click", undoLastEntry);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
     loadFromLocalStorage(); // keep this line here
   });
   

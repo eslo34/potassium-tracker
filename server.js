@@ -49,14 +49,12 @@ async function fetchNutritionData(foodQuery) {
         console.log("📝 Extracted Text from Perplexity:", resultText);
 
         // ✅ Extract values only from the official statement
-        const match = resultText.match(/Potassium\s(\d+).*?Sodium\s(\d+)/i);
+        const match = resultText.match(/Potassium\s(\d+)\s*mg.*?Sodium\s(\d+)\s*mg/i);
 
-        const potassium = match ? `${match[1]} mg` : "Not found";
-        const sodium = match ? `${match[2]} mg` : "Not found";
+        const potassium = match ? parseInt(match[1]) : 0;
+        const sodium = match ? parseInt(match[2]) : 0;
 
-        // ✅ Extract the USDA URL if available
-        const usdaLinkMatch = resultText.match(/(https:\/\/fdc\.nal\.usda\.gov\/food-details\/\d+\/nutrients)/i);
-        const usdaLink = usdaLinkMatch ? usdaLinkMatch[1] : "USDA data not found";
+
 
         console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}, Source: ${usdaLink}`);
 
