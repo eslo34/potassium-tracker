@@ -26,7 +26,11 @@ function saveToLocalStorage() {
 }
 
 // Load saved values on page load
-document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("addBtn").addEventListener("click", submitFood);
+    loadFromLocalStorage(); // keep this line here
+  });
+  
 
 async function submitFood() {
     const foodInput = document.getElementById("foodInput").value;
