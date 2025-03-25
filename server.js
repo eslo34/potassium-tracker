@@ -41,7 +41,7 @@ async function fetchNutritionData(foodQuery) {
         console.log("🟢 Perplexity Response:", JSON.stringify(response.data, null, 2));
 
         if (!response.data || !response.data.choices || response.data.choices.length === 0) {
-            return { food: foodQuery, potassium: "Not found", sodium: "Not found", source: "None" };
+            return { food: foodQuery, potassium: "Not found", sodium: "Not found"};
         }
 
         const resultText = response.data.choices[0].message.content;
@@ -56,19 +56,18 @@ async function fetchNutritionData(foodQuery) {
 
 
 
-        console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}, Source: ${usdaLink}`);
+        console.log(`✅ Extracted Values - Potassium: ${potassium}, Sodium: ${sodium}`);
 
         return {
             food: foodQuery,
             potassium,
             sodium,
-            source: usdaLink, // ✅ Adds the USDA source link
             fullResponse: resultText
         };
 
     } catch (error) {
         console.error("❌ Perplexity API error:", error.response?.data || error.message);
-        return { food: foodQuery, potassium: "Error", sodium: "Error", source: "Error" };
+        return { food: foodQuery, potassium: "Error", sodium: "Error"};
     }
 }
 
