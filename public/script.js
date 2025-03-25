@@ -32,51 +32,51 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
 
-async function submitFood() {
+  async function submitFood() {
     const foodInput = document.getElementById("foodInput").value;
+    const addBtn = document.getElementById("addBtn");
 
     if (!foodInput) {
         alert("Please enter a food item!");
         return;
     }
 
-    // Send the food input to the backend
-    const response = await fetch(`${backendURL}/analyze-food`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ food: foodInput })
-    });
+    // Show spinner
+    addBtn.disabled = true;
+    addBtn.innerHTML = `Add <span id="loadingSpinner"></span>`;
 
-    const data = await response.json();
+    try {
+        const response = await fetch(`${backendURL}/analyze-food`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ food: foodInput })
+        });
 
-    // Ensure data contains numbers
-    const potassium = parseInt(data.potassium) || 0;
-    const sodium = parseInt(data.sodium) || 0;
+        const data = await response.json();
 
-    // Store the current addition in history for undo
-    history.push({ potassium, sodium });
+        const potassium = parseInt(data.potassium) || 0;
+        const sodium = parseInt(data.sodium) || 0;
 
-    // Add to total values
-    totalPotassium += potassium;
-    totalSodium += sodium;
+        history.push({ potassium, sodium });
+        totalPotassium += potassium;
+        totalSodium += sodium;
+        trackedFoods.push({ food: foodInput, potassium, sodium });
 
-    // Add to tracked foods list
-    trackedFoods.push({ food: foodInput, potassium, sodium });
+        saveToLocalStorage();
+        updateUI();
+        showResponsePopup(data.fullResponse);
+        document.getElementById("foodInput").value = "";
 
-    // Save the new values to local storage
-    saveToLocalStorage();
-
-    // Update UI with accumulated values
-    updateUI();
-
-    // Show the full ChatGPT explanation in a pop-up
-    showResponsePopup(data.fullResponse);
-
-    // Clear input field
-    document.getElementById("foodInput").value = "";
+    } catch (error) {
+        console.error("Error analyzing food:", error);
+        alert("Something went wrong. Try again!");
+    } finally {
+        // Hide spinner
+        addBtn.disabled = false;
+        addBtn.innerHTML = "Add";
+    }
 }
+
 
 // Function to update the UI (used after any change)
 function updateUI() {
@@ -157,17 +157,18 @@ function clearAll() {
 function showResponsePopup(responseText) {
     const popup = document.createElement("div");
     popup.classList.add("popup");
-    
+
     popup.innerHTML = `
         <div class="popup-content">
-            <h3>ChatGPT Explanation</h3>
+            <h3>Nutrition Breakdown</h3>
             <p>${responseText}</p>
             <button onclick="closePopup()">Close</button>
         </div>
     `;
-    
+
     document.body.appendChild(popup);
 }
+
 
 // Function to close the pop-up
 function closePopup() {
