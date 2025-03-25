@@ -80,8 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Function to update the UI (used after any change)
 function updateUI() {
-    document.getElementById("potassiumDisplay").innerText = `${totalPotassium} mg`;
-    document.getElementById("sodiumDisplay").innerText = `${totalSodium} mg`;
+    document.getElementById("potassiumDisplay").innerText = `Potassium: ${totalPotassium} mg`;
+    document.getElementById("sodiumDisplay").innerText = `Sodium: ${totalSodium} mg`;
+
 
     // Update tracked food list
     const foodList = document.getElementById("intakeList");
