@@ -76,11 +76,11 @@ async function submitFood() {
 
 // Function to update the UI (used after any change)
 function updateUI() {
-    document.getElementById("potassiumCount").innerText = `${totalPotassium} mg`;
-    document.getElementById("sodiumCount").innerText = `${totalSodium} mg`;
+    document.getElementById("potassiumDisplay").innerText = `${totalPotassium} mg`;
+    document.getElementById("sodiumDisplay").innerText = `${totalSodium} mg`;
 
     // Update tracked food list
-    const foodList = document.getElementById("foodList");
+    const foodList = document.getElementById("intakeList");
     foodList.innerHTML = "";
 
     trackedFoods.forEach((item, index) => {
