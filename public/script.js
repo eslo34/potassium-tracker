@@ -177,3 +177,107 @@ function showResponsePopup(responseText) {
 function closePopup() {
     document.querySelector(".popup").remove();
 }
+
+// Cookie popup logic
+document.addEventListener("DOMContentLoaded", () => {
+    const cookiePopup = document.getElementById("cookiePopup");
+    const accepted = localStorage.getItem("cookiesAccepted");
+  
+    if (!accepted) {
+      cookiePopup.classList.remove("hidden");
+    }
+});
+  
+function acceptCookies() {
+    localStorage.setItem("cookiesAccepted", "true");
+    document.getElementById("cookiePopup").classList.add("hidden");
+}
+
+// Cookie Modal Logic
+document.addEventListener("DOMContentLoaded", () => {
+    const cookieModal = document.getElementById("cookieSettingsModal");
+    const cookieLink = document.getElementById("cookieSettingsLink");
+    const acceptBtn = document.getElementById("acceptCookies");
+    const closeBtn = document.getElementById("closeCookieModal");
+  
+    const COOKIE_KEY = "cookieConsent";
+  
+    if (!localStorage.getItem(COOKIE_KEY)) {
+      cookieModal.classList.remove("hidden");
+    }
+  
+    acceptBtn.addEventListener("click", () => {
+      localStorage.setItem(COOKIE_KEY, "accepted");
+      cookieModal.classList.add("hidden");
+    });
+  
+    closeBtn.addEventListener("click", () => {
+      cookieModal.classList.add("hidden");
+    });
+  
+    cookieLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      cookieModal.classList.remove("hidden");
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // === Water Tracker: JavaScript ===
+
+    // Constants and Selectors
+    const waterTrackerContainer = document.getElementById("water-tracker");
+    const waterGoalSelect = document.getElementById("waterGoal");
+    const waterCirclesContainer = document.getElementById("waterCircles");
+    const clearWaterBtn = document.getElementById("clearWaterBtn");
+
+
+    // Load or initialize
+    let waterGoal = parseFloat(localStorage.getItem("waterGoal")) || 2.0;
+    let waterProgress = parseInt(localStorage.getItem("waterProgress")) || 0;
+
+    waterGoalSelect.value = waterGoal.toFixed(1);
+    renderWaterCircles();
+
+    // Event Listeners
+    waterGoalSelect.addEventListener("change", () => {
+    waterGoal = parseFloat(waterGoalSelect.value);
+    localStorage.setItem("waterGoal", waterGoal);
+    waterProgress = 0;
+    localStorage.setItem("waterProgress", waterProgress);
+    renderWaterCircles();
+    });
+
+    clearWaterBtn.addEventListener("click", () => {
+    waterProgress = 0;
+    localStorage.setItem("waterProgress", waterProgress);
+    renderWaterCircles();
+    });
+
+    function handleWaterClick(index) {
+    if (index === waterProgress) {
+        waterProgress++;
+    } else if (index === waterProgress - 1) {
+        waterProgress--;
+    }
+    localStorage.setItem("waterProgress", waterProgress);
+    renderWaterCircles();
+    }
+
+    function renderWaterCircles() {
+    waterCirclesContainer.innerHTML = "";
+    const totalCircles = waterGoal / 0.5;
+    for (let i = 0; i < totalCircles; i++) {
+        const circle = document.createElement("div");
+        circle.classList.add("water-circle");
+        circle.innerText = "0.5L";
+        if (i < waterProgress) {
+        circle.classList.add("filled");
+        }
+        circle.addEventListener("click", () => handleWaterClick(i));
+        waterCirclesContainer.appendChild(circle);
+    }
+    }
+
+});

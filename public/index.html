@@ -39,17 +39,91 @@
       <ul id="intakeList"></ul>
     </div>
 
+    <div class="tracker-box">
+      <h2>💧 Water Intake Tracker</h2>
+      <label for="waterGoal">Set your daily goal (liters):</label>
+      <select id="waterGoal">
+        <option value="2">2.0 L</option>
+        <option value="2.5">2.5 L</option>
+        <option value="3">3.0 L</option>
+        <option value="3.5">3.5 L</option>
+        <option value="4">4.0 L</option>
+        <option value="4.5">4.5 L</option>
+        <option value="5">5.0 L</option>
+        <option value="5.5">5.5 L</option>
+        <option value="6">6.0 L</option>
+      </select>
+    
+      <div id="waterCircles" class="water-circles"></div>
+      <button id="clearWaterBtn" class="secondary">Clear</button>
+    </div>
+    
+    
+    
     <div id="responseBox" class="response hidden">
       <h2>Nutrition Breakdown</h2>
       <p id="responseText"></p>
       <button id="closeResponse" class="close-btn">Close</button>
     </div>
+    <div class="info-section">
+      <h2>The Benefits of Potassium</h2>
+      <p>
+        Potassium is an essential mineral that helps regulate fluid balance, nerve signals, and muscle contractions. But one of the more underrated benefits is its impact on facial appearance. When your potassium intake is sufficient and sodium is kept in check, your body tends to retain less water. This can lead to a more sculpted, less bloated look — especially in the face. Many people notice more defined features, including hollow cheeks and a slimmer jawline, simply by increasing potassium-rich foods like bananas, avocados, and sweet potatoes.
+      </p>
+      <p>
+        Potassium also helps counteract the effects of excess sodium, making it an excellent mineral for anyone concerned with heart health, blood pressure, or bloating. Plus, it's involved in keeping your muscles functioning properly, including the heart, and even supports optimal energy levels throughout the day.
+      </p>
+    </div>
+    
+    <div class="info-section">
+      <h2>The Role of Sodium</h2>
+      <p>
+        Most people consume far more sodium than they need — especially from processed foods, fast food, and restaurant meals. When sodium levels spike and aren't balanced by enough potassium, your body starts to hold on to water. This water retention often appears in your face, especially around the cheeks and under the eyes, giving a bloated or "puffy" look, which defenetly makes your face look rounder.
+      </p>
+      <p>
+        If you’ve ever felt like your face looks rounder in the morning after a bag of chips the night before — that’s sodium at work. While it can make a big difference in how you look and feel, reducing excessive sodium while increasing potassium can help reduce this puffiness and bring out more defined facial features like hollow cheeks and a strong jawline.
+      </p>
+      <p>That said, sodium isn’t the enemy — it’s about balance. Athletes and those who sweat a lot may actually need more sodium to function properly. It's not about cutting it out completely, but about staying mindful of your intake.</p>
+    </div>
+
+    <div class="info-section">
+      <h2>Water: The Underrated Face Sculptor</h2>
+      <p>
+        Drinking enough water can be one of the fastest ways to reduce puffiness in your face and make your cheekbones more defined. When your body isn’t getting enough water, it holds on to the little it has — leading to fluid retention, especially in soft areas like your cheeks, under eyes, and jawline. This gives your face that swollen, bloated look.
+      </p>
+      <p>
+        But when you're well-hydrated, your body doesn’t need to store excess water, and it can flush out sodium more efficiently. This directly impacts how lean and sharp your face looks — hydration helps bring out those hollow cheeks, a more defined jaw, and an overall healthier appearance.
+      </p>
+      <h3>💧 So how much should you drink?</h3>
+      <p>A general rule is to aim for about:</p>
+      <ul>
+        <li><strong>3.7 liters/day for men</strong> (around 15 cups)</li>
+        <li><strong>2.7 liters/day for women</strong> (around 11 cups)</li>
+      </ul>
+      <p>
+        If you’re working out, live in a hot climate, or eat a lot of salty foods, you may need even more.
+        Try sipping water throughout the day rather than chugging it all at once — and don’t wait until you’re thirsty.
+      </p>
+    </div>
+
+    <div class="info-section">
+      <h2>Your Face Reflects What You Eat (and Drink)</h2>
+      <p>
+        If you're chasing that chiseled, lean facial look, it’s not just about genetics — your daily habits shape it. Potassium helps flush out excess sodium, reduces facial water retention, and supports muscles — including those that shape your face.
+      </p>
+      <p>
+        Sodium, while necessary, can cause bloating and puffiness when over-consumed — especially if your potassium and water intake is low. Water is the game-changer. Hydration alone can transform how your face looks by reducing puffiness and helping you flush out excess salt. Combining these three — high potassium, balanced sodium, and proper hydration — is a natural way to sculpt your face without any tricks or filters. It's simple science that shows up in the mirror.
+      </p>
+    </div>
+    
+    
 
     <div class="footer-box">
       <a href="privacy.html">Privacy Policy</a> |
       <a href="terms.html">Terms of Service</a> |
       <a href="contact.html">Contact</a> |
       <a href="about.html">About</a>
+      <a href="#" id="cookieSettingsLink">Cookie Settings</a>
     </div>
 
     
@@ -57,27 +131,22 @@
 
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
-  <script>
-    window.addEventListener("load", function () {
-      window.cookieconsent.initialise({
-        palette: {
-          popup: {
-            background: "#21262d"
-          },
-          button: {
-            background: "#00aaff"
-          }
-        },
-        theme: "classic",
-        content: {
-          message: "This website uses cookies to ensure you get the best experience.",
-          dismiss: "Got it!",
-          link: "Learn more",
-          href: "privacy.html"
-        }
-      });
-    });
-  </script>
+  <div id="cookiePopup" class="cookie-popup hidden">
+    <div class="cookie-popup-inner">
+      <p>This website uses cookies to ensure you get the best experience. <a href="/privacy.html">Learn more</a></p>
+      <button onclick="acceptCookies()">Got it!</button>
+    </div>
+  </div>  
+
+  <!-- Cookie Settings Modal -->
+<div id="cookieSettingsModal" class="cookie-modal hidden">
+  <div class="cookie-modal-content">
+    <h2>Cookie Preferences</h2>
+    <p>We use cookies to ensure you get the best experience on our website. You can choose to accept or manage your preferences below.</p>
+    <button id="acceptCookies">Accept All</button>
+    <button id="closeCookieModal">Close</button>
+  </div>
+</div>
+
 </body>
 </html>
