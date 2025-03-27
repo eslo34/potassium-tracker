@@ -162,3 +162,34 @@ body {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+    .footer-box {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #21262d;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.1);
+      font-size: 0.9rem;
+    }
+    
+    .footer-box a {
+      color: #00aaff;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.2s ease;
+    }
+    
+    .footer-box a:hover {
+      color: #66d9ff;
+    }
+    .intro-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #21262d;
+      border-radius: 10px;
+      color: #eee;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    

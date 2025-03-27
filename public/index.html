@@ -11,7 +11,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>🥑 Potassium & Sodium Tracker</h1>
+    <h1>PotassiumTracker.com</h1>
+    <div class="intro-box">
+      <p>
+        Welcome to the Potassium & Sodium Tracker! This tool helps you easily monitor the amount of potassium and sodium in your daily food intake. Simply type the food and its quantity (e.g., "130g apple") and let our AI estimate its nutrition using sources such as the USDA database and many more to ensure you get the most accurate results!
+      </p>
+    </div>
 
     <div class="input-group">
       <input type="text" id="foodInput" placeholder="Enter food (e.g., '130g apple')" />
@@ -39,8 +44,40 @@
       <p id="responseText"></p>
       <button id="closeResponse" class="close-btn">Close</button>
     </div>
+
+    <div class="footer-box">
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Service</a> |
+      <a href="contact.html">Contact</a> |
+      <a href="about.html">About</a>
+    </div>
+
+    
   </div>
 
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+  <script>
+    window.addEventListener("load", function () {
+      window.cookieconsent.initialise({
+        palette: {
+          popup: {
+            background: "#21262d"
+          },
+          button: {
+            background: "#00aaff"
+          }
+        },
+        theme: "classic",
+        content: {
+          message: "This website uses cookies to ensure you get the best experience.",
+          dismiss: "Got it!",
+          link: "Learn more",
+          href: "privacy.html"
+        }
+      });
+    });
+  </script>
 </body>
 </html>
