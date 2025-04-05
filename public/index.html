@@ -155,5 +155,15 @@
   </div>
 </div>
 
+<script>
+  document.getElementById("addBtn").addEventListener("click", function() {
+    gtag('event', 'add_button_click', {
+      'event_category': 'button',
+      'event_label': 'Add Food Item',
+      'value': 1
+    });
+  });
+</script>
+
 </body>
 </html>
